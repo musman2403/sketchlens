@@ -5,11 +5,14 @@ import User from '../models/User.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET
+);
 
 router.post('/google', async (req, res) => {
   try {
-    const { token, code } = req.body;
+    const { token, code, redirectUri } = req.body;
     let googleId, email, name, profilePicture;
 
     if (token) {
@@ -25,7 +28,7 @@ router.post('/google', async (req, res) => {
       // Auth-code flow: exchange the authorization code for tokens
       const tokenRes = await client.getToken({
         code,
-        redirect_uri: 'postmessage', // For popup mode
+        redirect_uri: redirectUri || 'postmessage', // Use dynamic redirect_uri for mobile redirect flow
       });
       const idToken = tokenRes.tokens.id_token;
       const ticket = await client.verifyIdToken({
