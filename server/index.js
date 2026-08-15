@@ -1,6 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '.env') });
 import { GoogleGenAI } from '@google/genai';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
@@ -18,7 +24,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch((err) => console.error('MongoDB connection error:', err));
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://sketchlens-alpha.vercel.app'],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -111,6 +117,11 @@ Do not include any other text, markdown formatting, or code blocks. Just the JSO
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+// Conditionally listen if not running on Vercel serverless functions
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
+
+export default app;

@@ -113,3 +113,69 @@ main {
   display: flex;
   flex-direction: column;
 }
+
+/* Workspace Layout */
+.workspace-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  color: #fff;
+  background-color: #000;
+}
+
+.workspace-header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-glass);
+  z-index: 20;
+}
+
+.workspace-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.workspace-sidebar {
+  width: 350px;
+  border-radius: 0;
+  border: none;
+  border-right: 1px solid var(--border-glass);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.workspace-canvas {
+  flex: 1;
+  position: relative;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+/* Mobile Responsiveness for Workspace */
+@media (max-width: 768px) {
+  .workspace-header {
+    padding: 0.5rem 1rem;
+  }
+  .workspace-content {
+    flex-direction: column-reverse;
+  }
+  .workspace-canvas {
+    flex: 3; /* Takes 75% of remaining height */
+  }
+  .workspace-sidebar {
+    width: 100%;
+    flex: 1; /* Takes 25% of remaining height */
+    padding: 1rem;
+    border-right: none;
+    border-top: 1px solid var(--border-glass);
+    overflow-y: auto;
+  }
+}
+

@@ -31,21 +31,52 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md p-8 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl">
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 50,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backdropFilter: 'blur(4px)'
+    }}>
+      <div className="glass-panel" style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '28rem',
+        padding: '2rem',
+        backgroundColor: 'rgba(24, 24, 27, 0.9)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: '1rem',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+      }}>
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-white/50 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            padding: '0.5rem',
+            color: 'rgba(255, 255, 255, 0.5)',
+            background: 'transparent',
+            border: 'none',
+            borderRadius: '9999px',
+            cursor: 'pointer',
+            transition: 'color 0.2s, background-color 0.2s'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)'; e.currentTarget.style.backgroundColor = 'transparent'; }}
         >
-          <X className="w-5 h-5" />
+          <X size={20} />
         </button>
         
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-white mb-2">Welcome to SketchLens</h2>
-          <p className="text-white/60">Sign in to save your sketches and track your progress.</p>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>Welcome to SketchLens</h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Sign in to save your sketches and track your progress.</p>
         </div>
 
-        <div className="flex justify-center">
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <GoogleLogin
             onSuccess={handleSuccess}
             onError={() => {

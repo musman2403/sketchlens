@@ -12,9 +12,27 @@ export default function Landing({ onStart }) {
       
       <button 
         onClick={() => setIsAuthModalOpen(true)}
-        className="absolute top-8 right-8 flex items-center gap-2 px-6 py-2 bg-white/10 text-white rounded-full font-medium hover:bg-white/20 transition-colors"
+        className="hover-lift"
+        style={{
+          position: 'absolute',
+          top: '2rem',
+          right: '2rem',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.5rem 1.5rem',
+          background: 'rgba(255, 255, 255, 0.1)',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          borderRadius: 'var(--radius-pill)',
+          cursor: 'pointer',
+          fontWeight: '500',
+          fontSize: '1rem',
+          backdropFilter: 'blur(10px)'
+        }}
       >
-        <LogIn className="w-4 h-4" /> {t('buttons.signIn')}
+        <LogIn size={18} /> {t('buttons.signIn')}
       </button>
 
       <header style={{ marginBottom: '4rem' }}>
@@ -59,7 +77,7 @@ export default function Landing({ onStart }) {
         {t('buttons.startFree')}
       </button>
 
-      {isAuthModalOpen && <AuthModal onClose={() => setIsAuthModalOpen(false)} />}
+      {isAuthModalOpen && <AuthModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} />}
     </div>
   );
 }

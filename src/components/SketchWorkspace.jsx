@@ -24,6 +24,10 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [stepImages, setStepImages] = useState([]);
+  const [instructions, setInstructions] = useState([]);
+  const [opacity, setOpacity] = useState(0.5);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -168,41 +172,56 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
   }
 
   return (
-    <div className="workspace-page flex h-screen overflow-hidden text-white bg-black">
-      {/* Sidebar / Controls */}
-      <div className="glass-panel w-[350px] border-l-0 border-y-0 rounded-none p-8 flex flex-col z-10">
-        <div className="flex justify-between items-center mb-8">
-          <button onClick={onBack} className="flex items-center gap-2 bg-transparent border-none text-white/60 hover:text-white cursor-pointer text-base">
-            <ArrowLeft size={20} /> {t('workspace.exit')}
+    <div className="workspace-page">
+      {/* Top Header */}
+      <div className="workspace-header">
+        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '1rem' }}>
+          <ArrowLeft size={20} /> {t('workspace.exit')}
+        </button>
+        
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button onClick={handleDownload} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '50%', cursor: 'pointer', border: 'none', color: '#fff' }} title={t('buttons.download')}>
+            <Download size={18} />
           </button>
-          
-          <div className="flex gap-2">
-            <button onClick={handleDownload} className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors" title={t('buttons.download')}>
-              <Download size={18} />
-            </button>
-            <button onClick={handleShare} className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors" title={t('buttons.share')}>
-              <Share2 size={18} />
-            </button>
-          </div>
+          <button onClick={handleShare} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '50%', cursor: 'pointer', border: 'none', color: '#fff' }} title={t('buttons.share')}>
+            <Share2 size={18} />
+          </button>
         </div>
+      </div>
+
+      <div className="workspace-content">
+        {/* Sidebar / Controls */}
+        <div className="glass-panel workspace-sidebar">
 
         {user && (
           <button 
             onClick={handleSaveSketch}
             disabled={isSaving || isSaved}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-2 mb-8 rounded-full font-medium text-sm transition-colors ${
-              isSaved ? 'bg-green-500/20 text-green-400' : 
-              isSaving ? 'bg-white/5 text-white/50 cursor-not-allowed' : 
-              'bg-white/10 text-white hover:bg-white/20'
-            }`}
+            className="hover-lift"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              padding: '0.75rem 1rem',
+              marginBottom: '2rem',
+              borderRadius: '9999px',
+              fontWeight: '500',
+              fontSize: '0.875rem',
+              border: 'none',
+              cursor: isSaving ? 'not-allowed' : 'pointer',
+              background: isSaved ? 'rgba(16, 185, 129, 0.2)' : isSaving ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)',
+              color: isSaved ? '#34d399' : isSaving ? 'rgba(255,255,255,0.5)' : '#fff'
+            }}
           >
-            {isSaved ? <><Check className="w-4 h-4" /> {t('buttons.saved')}</> : 
-             isSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : 
-             <><Save className="w-4 h-4" /> {t('buttons.save')}</>}
+            {isSaved ? <><Check size={16} /> {t('buttons.saved')}</> : 
+             isSaving ? <><Loader2 size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Saving...</> : 
+             <><Save size={16} /> {t('buttons.save')}</>}
           </button>
         )}
 
-        <div className="flex-1 overflow-y-auto">
+        <div style={{ flex: 1, overflowY: 'auto' }}>
           <InstructionCard 
             step={currentStep + 1} 
             total={stepImages.length} 
@@ -210,7 +229,7 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
           />
         </div>
 
-        <div className="mt-auto pt-8">
+        <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
           <OpacitySlider value={opacity} onChange={setOpacity} />
           <StepNavigation 
             current={currentStep} 
@@ -220,12 +239,14 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
             isComplete={isComplete}
           />
         </div>
-      </div>
 
-      {/* Main Canvas Area */}
-      <div className="flex-1 relative bg-white">
-        <SketchOverlay image={stepImages[currentStep]} opacity={opacity} />
-        {isComplete && <Celebration />}
+        </div>
+        
+        {/* Main Canvas Area */}
+        <div className="workspace-canvas">
+          <SketchOverlay image={stepImages[currentStep]} opacity={opacity} />
+          {isComplete && <Celebration />}
+        </div>
       </div>
     </div>
   );

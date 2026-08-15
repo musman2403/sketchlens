@@ -62,62 +62,99 @@ export default function Dashboard({ onNewSketch }) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-8 pb-6">
-          <div className="flex items-center gap-4">
+    <div className="landing-page" style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+        
+        {/* Header */}
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-glass)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {user?.profilePicture ? (
-              <img src={user.profilePicture} alt="Profile" className="w-12 h-12 rounded-full border border-white/20" />
+              <img src={user.profilePicture} alt="Profile" style={{ width: '3rem', height: '3rem', borderRadius: '50%', border: '2px solid var(--border-glass)' }} />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+              <div style={{ width: '3rem', height: '3rem', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 'bold' }}>
                 {user?.name?.charAt(0)}
               </div>
             )}
             <div>
-              <h1 className="text-2xl font-bold">{t('dashboard.welcome', { name: user?.name })}</h1>
-              <p className="text-white/50">{user?.email}</p>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{t('dashboard.welcome', { name: user?.name })}</h1>
+              <p style={{ color: 'var(--text-secondary)', margin: 0 }}>{user?.email}</p>
             </div>
           </div>
           
           <div>
             <button 
               onClick={onNewSketch}
-              className="flex items-center gap-2 px-6 py-2 bg-white text-black rounded-full font-medium hover:bg-white/90 transition-colors"
+              className="hover-lift"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1.5rem',
+                background: 'var(--accent-gradient)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 'var(--radius-pill)',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
             >
-              <Plus className="w-4 h-4" /> {t('buttons.newSketch')}
+              <Plus size={18} /> {t('buttons.newSketch')}
             </button>
           </div>
         </header>
 
-        <div className="flex gap-4 mb-8 border-b border-white/10 pb-4">
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-glass)' }}>
           <button 
             onClick={() => setActiveTab('my_sketches')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === 'my_sketches' ? 'bg-white/20 text-white' : 'text-white/50 hover:bg-white/10'}`}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem', borderRadius: '0.5rem', cursor: 'pointer',
+              border: 'none',
+              background: activeTab === 'my_sketches' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              color: activeTab === 'my_sketches' ? '#fff' : 'var(--text-secondary)',
+              transition: 'all 0.2s'
+            }}
           >
             <UserIcon size={18} /> My Sketches
           </button>
           <button 
             onClick={() => setActiveTab('community')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === 'community' ? 'bg-white/20 text-white' : 'text-white/50 hover:bg-white/10'}`}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem', borderRadius: '0.5rem', cursor: 'pointer',
+              border: 'none',
+              background: activeTab === 'community' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              color: activeTab === 'community' ? '#fff' : 'var(--text-secondary)',
+              transition: 'all 0.2s'
+            }}
           >
             <Globe size={18} /> {t('community.title')}
           </button>
         </div>
 
+        {/* Content Area */}
         {activeTab === 'community' ? (
           <CommunityGallery />
         ) : loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
+            <div style={{ width: '2rem', height: '2rem', border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#fff', borderRadius: '50%' }} className="animate-spin"></div>
           </div>
         ) : sketches.length === 0 ? (
-          <div className="text-center py-32 bg-white/5 rounded-3xl border border-white/10">
-            <ImageIcon className="w-16 h-16 text-white/20 mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">{t('dashboard.noSketches')}</h2>
-            <p className="text-white/50 mb-6">{t('dashboard.startFirst')}</p>
+          <div className="glass-panel" style={{ textAlign: 'center', padding: '5rem 2rem', margin: '2rem auto', maxWidth: '600px' }}>
+            <ImageIcon size={64} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 auto 1rem' }} />
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{t('dashboard.noSketches')}</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>{t('dashboard.startFirst')}</p>
             <button 
               onClick={onNewSketch}
-              className="px-6 py-2 bg-white text-black rounded-full font-medium hover:bg-white/90 transition-colors"
+              className="hover-lift"
+              style={{
+                background: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.2)',
+                padding: '0.75rem 2rem',
+                borderRadius: 'var(--radius-pill)',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
             >
               {t('buttons.newSketch')}
             </button>
@@ -127,20 +164,31 @@ export default function Dashboard({ onNewSketch }) {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}
           >
             {sketches.map(sketch => (
-              <motion.div variants={itemVariants} key={sketch._id} className="bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden group hover:border-white/30 transition-colors">
-                <div className="aspect-[4/3] bg-black relative">
-                  <img src={sketch.imageUrl} alt={sketch.title} className="w-full h-full object-contain" />
+              <motion.div variants={itemVariants} key={sketch._id} className="glass-panel" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ aspectRatio: '4/3', backgroundColor: 'rgba(0,0,0,0.5)', position: 'relative' }}>
+                  <img src={sketch.imageUrl} alt={sketch.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <div className="p-4">
-                  <h3 className="font-medium text-lg mb-2">{sketch.title}</h3>
-                  <div className="flex justify-between items-center">
-                    <p className="text-white/50 text-sm">{new Date(sketch.createdAt).toLocaleDateString()}</p>
+                <div style={{ padding: '1.25rem' }}>
+                  <h3 style={{ fontWeight: '600', fontSize: '1.125rem', margin: '0 0 0.5rem 0' }}>{sketch.title}</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: 0 }}>
+                      {new Date(sketch.createdAt).toLocaleDateString()}
+                    </p>
                     <button 
                       onClick={() => handleTogglePublish(sketch._id)}
-                      className={`text-xs px-3 py-1 rounded-full border ${sketch.isPublic ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'}`}
+                      style={{
+                        fontSize: '0.75rem',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '9999px',
+                        border: sketch.isPublic ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(255,255,255,0.1)',
+                        backgroundColor: sketch.isPublic ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)',
+                        color: sketch.isPublic ? '#34d399' : 'rgba(255,255,255,0.6)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
                     >
                       {sketch.isPublic ? 'Published' : 'Make Public'}
                     </button>

@@ -1,16 +1,10 @@
 import { Upload, ImageIcon, ArrowLeft } from 'lucide-react';
 
 const SAMPLES = [
-  { id: 1, url: '/samples/anime-samurai.jpg', label: 'Anime Samurai' },
-  { id: 2, url: '/samples/anime-spirit.jpg', label: 'Forest Spirit' },
-  { id: 3, url: '/samples/rose.jpg', label: 'Rose' },
-  { id: 4, url: '/samples/mountain-lake.jpg', label: 'Mountain Lake' },
-  { id: 5, url: '/samples/female-portrait.jpg', label: 'Portrait' },
-  { id: 6, url: '/samples/cat-sitting.jpg', label: 'Cat' },
-  { id: 7, url: '/samples/lion-head.jpg', label: 'Lion' },
-  { id: 8, url: '/samples/eiffel-tower.jpg', label: 'Eiffel Tower' },
-  { id: 9, url: '/samples/acoustic-guitar.jpg', label: 'Guitar' },
-  { id: 10, url: '/samples/mandala.jpg', label: 'Mandala' },
+  { id: 1, url: '/samples/anime.jpg', label: 'Anime Boy' },
+  { id: 2, url: '/samples/landscape.jpg', label: 'Landscape' },
+  { id: 3, url: '/samples/cat.jpg', label: 'Cute Cat' },
+  { id: 4, url: '/samples/flower.jpg', label: 'Rose' }
 ];
 
 export default function ImageUploader({ onSelect, onBack }) {
