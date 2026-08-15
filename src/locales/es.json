@@ -1,0 +1,39 @@
+{
+  "appTitle": "SketchLens",
+  "tagline": "Convierte cualquier imagen en una lección de dibujo paso a paso, superpuesta en tu pantalla.",
+  "features": {
+    "aiPowered": "Impulsado por IA",
+    "aiDesc": "Analiza tu imagen y la divide en pasos lógicos.",
+    "overlay": "Superposición Progresiva",
+    "overlayDesc": "Traza paso a paso con instrucciones de texto sincronizadas.",
+    "difficulty": "Cualquier Dificultad",
+    "difficultyDesc": "Ajusta el número de pasos para que coincida con tu nivel de habilidad."
+  },
+  "buttons": {
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "startFree": "Empezar a Dibujar (Gratis)",
+    "newSketch": "Nuevo Dibujo",
+    "save": "Guardar Dibujo",
+    "saved": "Guardado",
+    "download": "Descargar PNG",
+    "share": "Compartir"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido de nuevo, {{name}}",
+    "noSketches": "Aún no hay dibujos",
+    "startFirst": "Comienza tu primera lección de dibujo asistida por IA."
+  },
+  "community": {
+    "title": "Galería de la Comunidad",
+    "publish": "Publicar en la Comunidad"
+  },
+  "workspace": {
+    "loading": "Generando tu lección personalizada...",
+    "analyzing": "Analizando bordes y calculando el orden óptimo de dibujo",
+    "exit": "Salir",
+    "step": "Paso {{current}} de {{total}}",
+    "opacity": "Opacidad de la Superposición",
+    "complete": "¡Lección Completa!"
+  }
+}

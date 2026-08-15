@@ -1,0 +1,39 @@
+{
+  "appTitle": "SketchLens",
+  "tagline": "Turn any image into a step-by-step drawing lesson, overlaid on your screen.",
+  "features": {
+    "aiPowered": "AI-Powered",
+    "aiDesc": "Analyzes your image and breaks it down into logical steps.",
+    "overlay": "Progressive Overlay",
+    "overlayDesc": "Trace step-by-step with synchronized text instructions.",
+    "difficulty": "Any Difficulty",
+    "difficultyDesc": "Adjust the number of steps to match your skill level."
+  },
+  "buttons": {
+    "signIn": "Sign In",
+    "signOut": "Logout",
+    "startFree": "Start Sketching (Free)",
+    "newSketch": "New Sketch",
+    "save": "Save Sketch",
+    "saved": "Saved",
+    "download": "Download PNG",
+    "share": "Share"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}",
+    "noSketches": "No sketches yet",
+    "startFirst": "Start your first AI-assisted drawing lesson."
+  },
+  "community": {
+    "title": "Community Gallery",
+    "publish": "Publish to Community"
+  },
+  "workspace": {
+    "loading": "Generating your custom lesson...",
+    "analyzing": "Analyzing edges and computing optimal sketch order",
+    "exit": "Exit",
+    "step": "Step {{current}} of {{total}}",
+    "opacity": "Overlay Opacity",
+    "complete": "Lesson Complete!"
+  }
+}
