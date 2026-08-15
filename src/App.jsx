@@ -38,6 +38,11 @@ function AppContent() {
     setScreen('configure');
   };
 
+  const handleSketchSelect = (sketch) => {
+    setOriginalImage(sketch.imageUrl);
+    setScreen('configure');
+  };
+
   const handleConfigureComplete = (steps, diff, style) => {
     if (!user) {
       const count = parseInt(localStorage.getItem('anonymous_sketch_count') || '0');
@@ -90,7 +95,7 @@ function AppContent() {
             style={{ width: '100%', height: '100%' }}
           >
             {screen === 'landing' && <Landing onStart={handleStart} />}
-            {screen === 'dashboard' && <Dashboard onNewSketch={handleStart} />}
+            {screen === 'dashboard' && <Dashboard onNewSketch={handleStart} onSketchSelect={handleSketchSelect} />}
             {screen === 'upload' && <ImageUploader onSelect={handleImageSelect} onBack={handleBack} />}
             {screen === 'configure' && (
               <StepConfigurator 

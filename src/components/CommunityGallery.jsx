@@ -4,7 +4,7 @@ import { Loader2, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 
-export default function CommunityGallery() {
+export default function CommunityGallery({ onSketchSelect }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [sketches, setSketches] = useState([]);
@@ -77,7 +77,13 @@ export default function CommunityGallery() {
           {sketches.map(sketch => {
             const isLiked = user && sketch.likes.includes(user.id);
             return (
-              <motion.div variants={itemVariants} key={sketch._id} className="glass-panel hover-lift" style={{ overflow: 'hidden' }}>
+              <motion.div 
+                variants={itemVariants} 
+                key={sketch._id} 
+                className="glass-panel hover-lift" 
+                style={{ overflow: 'hidden', cursor: 'pointer' }}
+                onClick={() => onSketchSelect && onSketchSelect(sketch)}
+              >
                 <img src={sketch.imageUrl} alt={sketch.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
                 <div style={{ padding: '1rem' }}>
                   <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>{sketch.title}</h3>
@@ -86,7 +92,7 @@ export default function CommunityGallery() {
                       By {sketch.userId?.name || 'Anonymous'}
                     </span>
                     <button 
-                      onClick={() => handleLike(sketch._id)}
+                      onClick={(e) => { e.stopPropagation(); handleLike(sketch._id); }}
                       style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'none', border: 'none', color: isLiked ? 'var(--accent-secondary)' : 'var(--text-secondary)', cursor: 'pointer' }}
                     >
                       <Heart size={16} fill={isLiked ? 'currentColor' : 'none'} />

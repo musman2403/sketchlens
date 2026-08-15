@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import CommunityGallery from './CommunityGallery';
 
-export default function Dashboard({ onNewSketch }) {
+export default function Dashboard({ onNewSketch, onSketchSelect }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [sketches, setSketches] = useState([]);
@@ -133,7 +133,7 @@ export default function Dashboard({ onNewSketch }) {
 
         {/* Content Area */}
         {activeTab === 'community' ? (
-          <CommunityGallery />
+          <CommunityGallery onSketchSelect={onSketchSelect} />
         ) : loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
             <div style={{ width: '2rem', height: '2rem', border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#fff', borderRadius: '50%' }} className="animate-spin"></div>
@@ -168,7 +168,7 @@ export default function Dashboard({ onNewSketch }) {
             style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}
           >
             {sketches.map(sketch => (
-              <motion.div variants={itemVariants} key={sketch._id} className="glass-panel" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+              <motion.div variants={itemVariants} key={sketch._id} className="glass-panel hover-lift" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', cursor: 'pointer' }} onClick={() => onSketchSelect(sketch)}>
                 <div style={{ aspectRatio: '4/3', backgroundColor: 'rgba(0,0,0,0.5)', position: 'relative' }}>
                   <img src={sketch.imageUrl} alt={sketch.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
@@ -179,7 +179,7 @@ export default function Dashboard({ onNewSketch }) {
                       {new Date(sketch.createdAt).toLocaleDateString()}
                     </p>
                     <button 
-                      onClick={() => handleTogglePublish(sketch._id)}
+                      onClick={(e) => { e.stopPropagation(); handleTogglePublish(sketch._id); }}
                       style={{
                         fontSize: '0.75rem',
                         padding: '0.25rem 0.75rem',
