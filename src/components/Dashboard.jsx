@@ -15,7 +15,7 @@ export default function Dashboard({ onNewSketch }) {
   useEffect(() => {
     const fetchSketches = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/sketches`, {
+        const res = await fetch(`/api/sketches`, {
           credentials: 'include'
         });
         if (res.ok) {
@@ -36,7 +36,7 @@ export default function Dashboard({ onNewSketch }) {
 
   const handleTogglePublish = async (id) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/sketches/${id}/publish`, {
+      const res = await fetch(`/api/sketches/${id}/publish`, {
         method: 'PUT',
         credentials: 'include'
       });

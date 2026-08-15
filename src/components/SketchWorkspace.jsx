@@ -105,7 +105,7 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
       formData.append('title', `Sketch - ${difficulty} - ${stepCount} steps`);
       formData.append('steps', JSON.stringify(instructions.map((inst, i) => ({ instruction: inst, imageIndex: i }))));
 
-      const apiRes = await fetch(`${import.meta.env.VITE_API_URL}/api/sketches`, {
+      const apiRes = await fetch(`/api/sketches`, {
         method: 'POST',
         body: formData,
         credentials: 'include'

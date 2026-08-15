@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+      const res = await fetch(`/api/auth/me`, {
         credentials: 'include'
       });
       
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         window.history.replaceState({}, document.title, window.location.pathname);
         
         try {
-          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
+          const res = await fetch(`/api/auth/google`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code, redirectUri: window.location.origin }),
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, { method: 'POST', credentials: 'include' });
+      await fetch(`/api/auth/logout`, { method: 'POST', credentials: 'include' });
       setUser(null);
     } catch (error) {
       console.error('Logout failed', error);

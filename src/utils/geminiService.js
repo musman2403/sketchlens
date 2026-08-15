@@ -6,7 +6,7 @@
 export const getInstructionsForSteps = async (images, artStyle = 'Standard') => {
   try {
     // VITE_API_URL is defined in .env.local
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiUrl = "";
     
     const response = await fetch(`${apiUrl}/api/ai/analyze`, {
       method: 'POST',
