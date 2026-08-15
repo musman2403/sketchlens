@@ -26,9 +26,15 @@ router.post('/google', async (req, res) => {
 
     } else if (code) {
       // Auth-code flow: exchange the authorization code for tokens
+      if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+         throw new Error("Missing Google Client ID or Secret on the server");
+      }
+
       const tokenRes = await client.getToken({
         code,
         redirect_uri: redirectUri || 'postmessage', // Use dynamic redirect_uri for mobile redirect flow
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
       });
       const idToken = tokenRes.tokens.id_token;
       const ticket = await client.verifyIdToken({
