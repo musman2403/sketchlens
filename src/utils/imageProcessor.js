@@ -1,6 +1,9 @@
 /**
  * src/utils/imageProcessor.js
  * OpenCV.js logic for SketchLens
+ * 
+ * Uses raw edge pixels (not contours) to guarantee exactly N steps
+ * with perfectly equal visual progress.
  */
 
 export const processImageWithOpenCV = async (imageElement, stepCount) => {
@@ -29,12 +32,10 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
     height = newHeight;
   }
 
-  // 2. Grayscale, CLAHE (Contrast Enhancement), Blur, and Canny Edge Detection
+  // 2. Grayscale, CLAHE, Blur, and Canny Edge Detection
   let gray = new cv.Mat();
   cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
   
-  // Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
-  // This boosts local contrast so soft features (like the face) become visible to Canny
   let clahe = new cv.CLAHE(2.0, new cv.Size(8, 8));
   let enhanced = new cv.Mat();
   clahe.apply(gray, enhanced);
@@ -43,98 +44,77 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   cv.GaussianBlur(enhanced, blurred, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
 
   let edges = new cv.Mat();
-  // Using Canny now gives single-pixel lines (no double edges) 
-  // and thanks to CLAHE, it won't miss the face!
   cv.Canny(blurred, edges, 40, 120);
 
-  // Use MORPH_CLOSE to connect broken lines. 
-  // (MORPH_OPEN was destroying the 1-pixel lines from Canny)
+  // Thicken the edges slightly so the final sketch looks clean
   let kernel = cv.Mat.ones(2, 2, cv.CV_8U);
-  cv.morphologyEx(edges, edges, cv.MORPH_CLOSE, kernel);
+  cv.dilate(edges, edges, kernel);
 
-  // 3. Find Contours with RETR_TREE to get hierarchy
-  let contours = new cv.MatVector();
-  let hierarchy = new cv.Mat();
-  cv.findContours(edges, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_NONE);
+  // 3. Collect ALL edge pixel coordinates directly from the Canny output
+  const edgePixels = [];
+  const edgeData = edges.data;
 
-  // Parse hierarchy
-  const contourData = [];
-  for (let i = 0; i < contours.size(); ++i) {
-    const contour = contours.get(i);
-    const area = cv.contourArea(contour);
-    const arcLength = cv.arcLength(contour, false);
-    
-    // Filter out tiny dots and noise
-    if (arcLength < 20) continue;
-
-    const hierarchyData = hierarchy.intPtr(0, i);
-    const parent = hierarchyData[3];
-    // Calculate "depth"
-    let depth = 0;
-    let currParent = parent;
-    while (currParent !== -1) {
-      depth++;
-      currParent = hierarchy.intPtr(0, currParent)[3];
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (edgeData[y * width + x] > 0) {
+        edgePixels.push({ x, y });
+      }
     }
-    contourData.push({ index: i, depth, area });
   }
 
-  kernel.delete();
+  console.log(`[SketchLens] Total edge pixels: ${edgePixels.length}, splitting into ${stepCount} steps`);
 
-  // 4. Group contours by depth (0 = outer, 1 = inner, etc.), then sort by area descending within each depth
-  contourData.sort((a, b) => {
-    if (a.depth !== b.depth) return a.depth - b.depth;
-    return b.area - a.area;
+  // 4. Sort pixels by distance from center (draws outer structure first, inner details last)
+  const cx = width / 2;
+  const cy = height / 2;
+  edgePixels.sort((a, b) => {
+    const distA = (a.x - cx) * (a.x - cx) + (a.y - cy) * (a.y - cy);
+    const distB = (b.x - cx) * (b.x - cx) + (b.y - cy) * (b.y - cy);
+    return distB - distA; // Farthest pixels first (outer edges)
   });
 
-  // 5. Divide into discrete steps based on `stepCount` by splitting individual line segments!
-  // This guarantees exactly `stepCount` steps even for very simple drawings.
-  const allPoints = [];
-  for (let c = 0; c < contourData.length; c++) {
-    const contour = contours.get(contourData[c].index);
-    for (let i = 0; i < contour.rows; i++) {
-       const x = contour.data32S[i * 2];
-       const y = contour.data32S[i * 2 + 1];
-       allPoints.push({ x, y, newContour: i === 0 });
-    }
-  }
-
+  // 5. Create cumulative step images — each step adds exactly (totalPixels / stepCount) new pixels
   const stepImages = [];
-  let currentImageMat = new cv.Mat.zeros(height, width, cv.CV_8UC4);
-  const color = new cv.Scalar(0, 0, 0, 255); // Black
-
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
+  const ctx = canvas.getContext('2d');
 
-  // Evenly distribute points across the exact number of requested steps using precise fractional boundaries
+  // Start with a white background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, width, height);
+
+  // Use ImageData for fast pixel manipulation
+  let imgData = ctx.getImageData(0, 0, width, height);
+
   for (let step = 0; step < stepCount; step++) {
-    const startIdx = Math.floor((step / stepCount) * allPoints.length);
-    const endIdx = Math.floor(((step + 1) / stepCount) * allPoints.length);
+    const startIdx = Math.floor((step / stepCount) * edgePixels.length);
+    const endIdx = Math.floor(((step + 1) / stepCount) * edgePixels.length);
 
+    // Draw this step's batch of pixels onto the cumulative image
     for (let i = startIdx; i < endIdx; i++) {
-      if (allPoints[i].newContour || i === 0) continue;
-      
-      const pt1 = new cv.Point(allPoints[i-1].x, allPoints[i-1].y);
-      const pt2 = new cv.Point(allPoints[i].x, allPoints[i].y);
-      
-      cv.line(currentImageMat, pt1, pt2, color, 2, cv.LINE_8, 0);
+      const px = edgePixels[i];
+      const idx = (px.y * width + px.x) * 4;
+      imgData.data[idx] = 0;       // R
+      imgData.data[idx + 1] = 0;   // G
+      imgData.data[idx + 2] = 0;   // B
+      imgData.data[idx + 3] = 255; // A
     }
 
-    cv.imshow(canvas, currentImageMat);
+    ctx.putImageData(imgData, 0, 0);
     stepImages.push(canvas.toDataURL('image/png'));
+
+    console.log(`[SketchLens] Step ${step + 1}: drew pixels ${startIdx}–${endIdx} (${endIdx - startIdx} new pixels)`);
   }
 
-  // Cleanup
+  // Cleanup OpenCV Mats
   src.delete();
   gray.delete();
   enhanced.delete();
   clahe.delete();
   blurred.delete();
   edges.delete();
-  contours.delete();
-  hierarchy.delete();
-  currentImageMat.delete();
+  kernel.delete();
 
   return stepImages;
 };
