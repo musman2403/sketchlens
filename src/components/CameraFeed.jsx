@@ -43,7 +43,7 @@ export default function CameraFeed({ active }) {
     };
   }, [active]);
 
-  if (!active || (!hasCamera && !error)) return null;
+  if (!active) return null;
 
   if (error) {
     return (
@@ -78,6 +78,8 @@ export default function CameraFeed({ active }) {
         height: '100%',
         objectFit: 'cover',
         zIndex: 0,
+        opacity: hasCamera ? 1 : 0,
+        transition: 'opacity 0.3s ease'
       }}
     />
   );
