@@ -25,7 +25,10 @@ export default function AuthModal({ isOpen, onClose }) {
         const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: codeResponse.code }),
+          body: JSON.stringify({ 
+            code: codeResponse.code,
+            redirectUri: isMobile ? window.location.origin : undefined 
+          }),
           credentials: 'include'
         });
         
