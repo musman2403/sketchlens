@@ -15,8 +15,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
   const handleGoogleLogin = useGoogleLogin({
     flow: 'auth-code',
-    ux_mode: isMobile ? 'redirect' : 'popup',
-    redirect_uri: isMobile ? window.location.origin : undefined,
+    ux_mode: 'popup',
     onSuccess: async (codeResponse) => {
       setLoading(true);
       setError('');

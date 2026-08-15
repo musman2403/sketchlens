@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, LogIn } from 'lucide-react';
+import AuthModal from './AuthModal';
+import { useState } from 'react';
 
 export default function Navbar({ onShowPricing }) {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -47,8 +50,29 @@ export default function Navbar({ onShowPricing }) {
           >
             {t('buttons.signOut')}
           </button>
-        ) : null}
+        ) : (
+          <button 
+            onClick={() => setIsAuthModalOpen(true)}
+            className="hover-lift"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1.25rem',
+              background: 'rgba(255, 255, 255, 0.1)',
+              color: '#fff',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: 'var(--radius-pill)',
+              cursor: 'pointer',
+              fontWeight: '500',
+              backdropFilter: 'blur(10px)'
+            }}
+          >
+            <LogIn size={16} /> {t('buttons.signIn')}
+          </button>
+        )}
       </div>
+      {isAuthModalOpen && <AuthModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} />}
     </nav>
   );
 }

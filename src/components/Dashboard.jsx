@@ -66,7 +66,7 @@ export default function Dashboard({ onNewSketch }) {
       <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         
         {/* Header */}
-        <header className="flex-responsive" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-glass)' }}>
+        <header className="flex-responsive" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-glass)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {user?.profilePicture ? (
               <img src={user.profilePicture} alt="Profile" style={{ width: '3rem', height: '3rem', borderRadius: '50%', border: '2px solid var(--border-glass)' }} />
