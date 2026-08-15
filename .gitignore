@@ -30,3 +30,6 @@ dist-ssr
 
 # Server env files
 server/.env
+
+# Scratch files
+scratch/

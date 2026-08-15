@@ -31,7 +31,7 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
     height = newHeight;
   }
 
-  // 2. Grayscale → CLAHE → Blur → Canny
+  // 2. Grayscale → CLAHE → Blur
   let gray = new cv.Mat();
   cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
 
@@ -42,13 +42,15 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   let blurred = new cv.Mat();
   cv.GaussianBlur(enhanced, blurred, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
 
+  // Find structural edges for ordering
   let edges = new cv.Mat();
   cv.Canny(blurred, edges, 40, 120);
 
-  let kernel = cv.Mat.ones(2, 2, cv.CV_8U);
-  cv.dilate(edges, edges, kernel);
+  // Extract solid strokes for pixel inclusion
+  let strokes = new cv.Mat();
+  cv.adaptiveThreshold(blurred, strokes, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 21, 4);
 
-  // 3. Find contours and sort by area (largest/structural first → smallest/detail last)
+  // 3. Find contours on Canny edges and sort by area (largest/structural first → smallest/detail last)
   let contours = new cv.MatVector();
   let hierarchy = new cv.Mat();
   cv.findContours(edges, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
@@ -60,22 +62,22 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   contourAreas.sort((a, b) => b.area - a.area); // Largest first
 
   // 4. For each contour (in importance order), stamp it onto a mask and collect
-  //    the NEW edge pixels it covers. This orders pixels by drawing importance
-  //    while guaranteeing every edge pixel is included exactly once.
+  //    the stroke pixels it covers. This orders pixels by drawing importance.
   const claimed = new Uint8Array(width * height); // tracks which pixels are taken
   const orderedPixels = [];
+  const strokesData = strokes.data;
 
   for (const { index } of contourAreas) {
-    // Draw this single contour onto a temporary mask
+    // Draw this single contour onto a temporary mask with a thick line
     let mask = cv.Mat.zeros(height, width, cv.CV_8U);
-    cv.drawContours(mask, contours, index, new cv.Scalar(255), 2, cv.LINE_8, hierarchy, 0);
+    cv.drawContours(mask, contours, index, new cv.Scalar(255), 10, cv.LINE_8, hierarchy, 0);
 
     const maskData = mask.data;
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const pos = y * width + x;
-        if (maskData[pos] > 0 && !claimed[pos]) {
-          // This pixel is on this contour AND hasn't been claimed yet
+        if (maskData[pos] > 0 && strokesData[pos] > 0 && !claimed[pos]) {
+          // This pixel is near the structural line, is part of a stroke, and hasn't been claimed yet
           orderedPixels.push({ x, y });
           claimed[pos] = 1;
         }
@@ -84,12 +86,11 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
     mask.delete();
   }
 
-  // 5. Catch any remaining edge pixels not covered by contours
-  const edgeData = edges.data;
+  // 5. Catch any remaining stroke pixels not covered by the contours (e.g. shading, details)
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const pos = y * width + x;
-      if (edgeData[pos] > 0 && !claimed[pos]) {
+      if (strokesData[pos] > 0 && !claimed[pos]) {
         orderedPixels.push({ x, y });
       }
     }
@@ -97,7 +98,7 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
 
   console.log(`[SketchLens] Total ordered pixels: ${orderedPixels.length}, splitting into ${stepCount} steps`);
 
-  // 6. Create cumulative step images — perfectly even distribution
+  // 6. Create cumulative step images using ORIGINAL pixel colors
   const stepImages = [];
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -108,6 +109,7 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   ctx.fillRect(0, 0, width, height);
 
   let imgData = ctx.getImageData(0, 0, width, height);
+  const srcData = src.data;
 
   for (let step = 0; step < stepCount; step++) {
     const startIdx = Math.floor((step / stepCount) * orderedPixels.length);
@@ -116,10 +118,10 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
     for (let i = startIdx; i < endIdx; i++) {
       const px = orderedPixels[i];
       const idx = (px.y * width + px.x) * 4;
-      imgData.data[idx] = 0;       // R
-      imgData.data[idx + 1] = 0;   // G
-      imgData.data[idx + 2] = 0;   // B
-      imgData.data[idx + 3] = 255; // A
+      imgData.data[idx] = srcData[idx];         // R
+      imgData.data[idx + 1] = srcData[idx + 1]; // G
+      imgData.data[idx + 2] = srcData[idx + 2]; // B
+      imgData.data[idx + 3] = srcData[idx + 3]; // A
     }
 
     ctx.putImageData(imgData, 0, 0);
@@ -135,7 +137,7 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   clahe.delete();
   blurred.delete();
   edges.delete();
-  kernel.delete();
+  strokes.delete();
   contours.delete();
   hierarchy.delete();
 
