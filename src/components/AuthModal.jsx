@@ -2,6 +2,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { X } from 'lucide-react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function AuthModal({ isOpen, onClose }) {
   const { login } = useAuth();
@@ -48,11 +49,11 @@ export default function AuthModal({ isOpen, onClose }) {
     }
   });
 
-  return (
+  const modalContent = (
     <div style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 50,
+      zIndex: 9999, // increased z-index to ensure it is above everything
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -133,4 +134,6 @@ export default function AuthModal({ isOpen, onClose }) {
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null;
 }
