@@ -16,7 +16,7 @@ export default function CommunityGallery() {
 
   const fetchSketches = async () => {
     try {
-      const res = await fetch(`/api/sketches/community`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/sketches/community`);
       const data = await res.json();
       setSketches(data.sketches || []);
     } catch (err) {
@@ -29,7 +29,7 @@ export default function CommunityGallery() {
   const handleLike = async (id) => {
     if (!user) return alert(t('buttons.signIn'));
     try {
-      const res = await fetch(`/api/sketches/${id}/like`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/sketches/${id}/like`, {
         method: 'POST',
         credentials: 'include'
       });

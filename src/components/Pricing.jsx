@@ -16,7 +16,7 @@ export default function Pricing({ onClose }) {
     
     setLoading(true);
     try {
-      const res = await fetch(`/api/billing/create-checkout-session`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/billing/create-checkout-session`, {
         method: 'POST',
         credentials: 'include'
       });
