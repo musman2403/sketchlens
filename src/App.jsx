@@ -9,6 +9,7 @@ import StepConfigurator from './components/StepConfigurator';
 import SketchWorkspace from './components/SketchWorkspace';
 import Dashboard from './components/Dashboard';
 import Pricing from './components/Pricing';
+import LoadingScreen from './components/LoadingScreen';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -59,7 +60,7 @@ function AppContent() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-black flex items-center justify-center text-white">Loading...</div>;
+    return <LoadingScreen message="SketchLens" subtitle="Loading your creative space..." />;
   }
 
   const pageVariants = {

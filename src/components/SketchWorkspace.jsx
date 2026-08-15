@@ -4,6 +4,7 @@ import { processImageWithOpenCV } from '../utils/imageProcessor';
 import { getInstructionsForSteps } from '../utils/geminiService';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import LoadingScreen from './LoadingScreen';
 
 // Subcomponents (mocked for now, will create next)
 // Subcomponents
@@ -12,6 +13,7 @@ import StepNavigation from './StepNavigation';
 import InstructionCard from './InstructionCard';
 import OpacitySlider from './OpacitySlider';
 import Celebration from './Celebration';
+import CameraFeed from './CameraFeed';
 
 export default function SketchWorkspace({ image, stepCount, difficulty, artStyle, onBack }) {
   const { user } = useAuth();
@@ -152,12 +154,10 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem' }}>
-        <Loader2 size={48} className="spin" color="var(--accent-primary)" style={{ animation: 'spin 2s linear infinite' }} />
-        <h2>{t('workspace.loading')}</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>{t('workspace.analyzing')}</p>
-        <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
-      </div>
+      <LoadingScreen 
+        message={t('workspace.loading')} 
+        subtitle={t('workspace.analyzing')} 
+      />
     );
   }
 
@@ -243,7 +243,8 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
         </div>
         
         {/* Main Canvas Area */}
-        <div className="workspace-canvas">
+        <div className="workspace-canvas" style={{ position: 'relative' }}>
+          <CameraFeed active={/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)} />
           <SketchOverlay image={stepImages[currentStep]} opacity={opacity} />
           {isComplete && <Celebration />}
         </div>

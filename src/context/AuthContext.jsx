@@ -10,16 +10,12 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
-        credentials: 'omit', // We'll change this to 'include' later, but wait, httpOnly cookie requires 'include'
-      });
-      // Actually fetch needs credentials: 'include' for the httpOnly cookie to be sent
-      const resWithCreds = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
         credentials: 'include'
       });
       
-      if (resWithCreds.ok) {
-        const data = await resWithCreds.json();
+      if (res.ok) {
+        const data = await res.json();
         setUser(data.user);
       } else {
         setUser(null);

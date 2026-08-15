@@ -9,15 +9,35 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 router.post('/google', async (req, res) => {
   try {
-    const { token } = req.body;
-    
-    // Verify Google Token
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
-    const { sub: googleId, email, name, picture: profilePicture } = payload;
+    const { token, code } = req.body;
+    let googleId, email, name, profilePicture;
+
+    if (token) {
+      // Legacy flow: frontend sent an ID token directly
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      ({ sub: googleId, email, name, picture: profilePicture } = payload);
+
+    } else if (code) {
+      // Auth-code flow: exchange the authorization code for tokens
+      const tokenRes = await client.getToken({
+        code,
+        redirect_uri: 'postmessage', // For popup mode
+      });
+      const idToken = tokenRes.tokens.id_token;
+      const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      ({ sub: googleId, email, name, picture: profilePicture } = payload);
+
+    } else {
+      return res.status(400).json({ error: 'No token or code provided' });
+    }
 
     // Find or create user
     let user = await User.findOne({ googleId });
