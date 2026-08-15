@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Sparkles, Layers, PenTool, LogIn } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
 export default function Landing({ onStart }) {
   const { t } = useTranslation();
 
+  return (
     <div className="landing-page p-responsive" style={{ padding: '4rem 2rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
       <header style={{ marginBottom: '4rem' }}>
         <h1 className="text-gradient" style={{ fontSize: '4rem', marginBottom: '1rem' }}>{t('appTitle')}</h1>
@@ -46,5 +49,5 @@ export default function Landing({ onStart }) {
         {t('buttons.startFree')}
       </button>
     </div>
-  ;
+  );
 }
