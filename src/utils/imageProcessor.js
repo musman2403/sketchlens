@@ -55,7 +55,7 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   // 3. Find Contours with RETR_TREE to get hierarchy
   let contours = new cv.MatVector();
   let hierarchy = new cv.Mat();
-  cv.findContours(edges, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+  cv.findContours(edges, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_NONE);
 
   // Parse hierarchy
   const contourData = [];
@@ -87,12 +87,19 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
     return b.area - a.area;
   });
 
-  // 5. Divide into discrete steps based on `stepCount`
-  const stepSize = Math.ceil(contourData.length / stepCount);
+  // 5. Divide into discrete steps based on `stepCount` by splitting individual line segments!
+  // This guarantees exactly `stepCount` steps even for very simple drawings.
+  const allPoints = [];
+  for (let c = 0; c < contourData.length; c++) {
+    const contour = contours.get(contourData[c].index);
+    for (let i = 0; i < contour.rows; i++) {
+       const x = contour.data32S[i * 2];
+       const y = contour.data32S[i * 2 + 1];
+       allPoints.push({ x, y, newContour: i === 0 });
+    }
+  }
+
   const stepImages = [];
-  
-  // We want cumulative images (each step has previous lines + new lines)
-  // Let's create a transparent canvas
   let currentImageMat = new cv.Mat.zeros(height, width, cv.CV_8UC4);
   const color = new cv.Scalar(0, 0, 0, 255); // Black
 
@@ -100,14 +107,18 @@ export const processImageWithOpenCV = async (imageElement, stepCount) => {
   canvas.width = width;
   canvas.height = height;
 
+  // Evenly distribute points across the exact number of requested steps using precise fractional boundaries
   for (let step = 0; step < stepCount; step++) {
-    const startIdx = step * stepSize;
-    const endIdx = Math.min(startIdx + stepSize, contourData.length);
-    
-    if (startIdx >= contourData.length) break;
+    const startIdx = Math.floor((step / stepCount) * allPoints.length);
+    const endIdx = Math.floor(((step + 1) / stepCount) * allPoints.length);
 
     for (let i = startIdx; i < endIdx; i++) {
-      cv.drawContours(currentImageMat, contours, contourData[i].index, color, 2, cv.LINE_8, hierarchy, 0);
+      if (allPoints[i].newContour || i === 0) continue;
+      
+      const pt1 = new cv.Point(allPoints[i-1].x, allPoints[i-1].y);
+      const pt2 = new cv.Point(allPoints[i].x, allPoints[i].y);
+      
+      cv.line(currentImageMat, pt1, pt2, color, 2, cv.LINE_8, 0);
     }
 
     cv.imshow(canvas, currentImageMat);

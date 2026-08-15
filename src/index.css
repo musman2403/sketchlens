@@ -179,3 +179,53 @@ main {
   }
 }
 
+/* General Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Typography Scaling */
+  .text-gradient {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+  
+  /* Layout Stacks */
+  .flex-responsive {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  
+  .flex-responsive-reverse {
+    flex-direction: column-reverse !important;
+  }
+  
+  /* Padding Scaling */
+  .p-responsive {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .px-responsive {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Navbar */
+  .navbar-container {
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+  }
+  
+  /* Grid Layouts */
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+}

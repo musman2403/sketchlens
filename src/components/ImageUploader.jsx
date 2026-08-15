@@ -20,7 +20,7 @@ export default function ImageUploader({ onSelect, onBack }) {
   };
 
   return (
-    <div className="uploader-page" style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
+    <div className="uploader-page p-responsive" style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
       <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', marginBottom: '2rem', fontSize: '1rem' }}>
         <ArrowLeft size={20} /> Back
       </button>
@@ -45,7 +45,7 @@ export default function ImageUploader({ onSelect, onBack }) {
       </div>
 
       <h3 style={{ marginBottom: '1.5rem' }}>Or pick a starter image</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1.5rem' }}>
+      <div className="grid-responsive" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1.5rem' }}>
         {SAMPLES.map(sample => (
           <div 
             key={sample.id} 

@@ -12,7 +12,7 @@ export default function Navbar({ onShowPricing }) {
   };
 
   return (
-    <nav className="glass-header" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <nav className="glass-header navbar-container" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div style={{ fontWeight: 'bold', fontSize: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
         <span className="text-gradient">SketchLens</span>
         <select 

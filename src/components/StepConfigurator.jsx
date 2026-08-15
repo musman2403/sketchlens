@@ -16,13 +16,13 @@ export default function StepConfigurator({ image, onComplete, onBack }) {
   ];
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
+    <div className="p-responsive" style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
       <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', marginBottom: '2rem', fontSize: '1rem' }}>
         <ArrowLeft size={20} /> Back
       </button>
 
-      <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 400px' }}>
+      <div className="flex-responsive" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 300px', minWidth: 0 }}>
           <div className="glass-panel" style={{ width: '100%', aspectRatio: '4/3', backgroundImage: `url(${image})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', overflow: 'hidden' }}>
           </div>
         </div>

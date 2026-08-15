@@ -8,7 +8,7 @@ export default function Landing({ onStart }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   return (
-    <div className="landing-page" style={{ padding: '4rem 2rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+    <div className="landing-page p-responsive" style={{ padding: '4rem 2rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
       
       <button 
         onClick={() => setIsAuthModalOpen(true)}
@@ -42,7 +42,7 @@ export default function Landing({ onStart }) {
         </p>
       </header>
       
-      <div className="features glass-panel" style={{ display: 'flex', gap: '2rem', justifyContent: 'center', padding: '3rem', maxWidth: '900px', margin: '0 auto 4rem', flexWrap: 'wrap' }}>
+      <div className="features glass-panel flex-responsive" style={{ display: 'flex', gap: '2rem', justifyContent: 'center', padding: '3rem', maxWidth: '900px', margin: '0 auto 4rem', flexWrap: 'wrap' }}>
         <div className="feature" style={{ flex: '1 1 250px', textAlign: 'left' }}>
           <Sparkles size={32} color="var(--accent-primary)" style={{ marginBottom: '1rem' }} />
           <h3 style={{ marginBottom: '0.5rem' }}>{t('features.aiPowered')}</h3>
