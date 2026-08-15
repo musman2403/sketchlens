@@ -28,8 +28,8 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    // Allow localhost and any vercel deployment URL
-    if (origin === 'http://localhost:5173' || origin.endsWith('.vercel.app')) {
+    // Allow any localhost/127.0.0.1 port and any vercel deployment URL
+    if (/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin) || origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
     
