@@ -5,15 +5,16 @@ import User from '../models/User.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
-const client = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET
-);
 
 router.post('/google', async (req, res) => {
   try {
     const { token, code, redirectUri } = req.body;
     let googleId, email, name, profilePicture;
+
+    const client = new OAuth2Client(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET
+    );
 
     if (token) {
       // Legacy flow: frontend sent an ID token directly
@@ -33,8 +34,6 @@ router.post('/google', async (req, res) => {
       const tokenRes = await client.getToken({
         code,
         redirect_uri: redirectUri || 'postmessage', // Use dynamic redirect_uri for mobile redirect flow
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
       });
       const idToken = tokenRes.tokens.id_token;
       const ticket = await client.verifyIdToken({
