@@ -64,7 +64,7 @@ export default function Pricing({ onClose }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
       padding: '2rem'
     }}>
-      <div className="glass-panel relative" style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', padding: '0' }}>
+      <div className="glass-panel relative" style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', padding: '0', maxHeight: '90vh', overflowY: 'auto' }}>
         <button 
           onClick={onClose}
           style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
