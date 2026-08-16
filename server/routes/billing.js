@@ -93,6 +93,7 @@ router.post('/create-safepay-session', requireAuth, async (req, res) => {
       beacon: trackerToken,
       source: 'custom',
       orderId: orderId,
+      webhooks: 'true',
       cancelUrl: `${clientUrl}/dashboard?canceled=true`,
       redirectUrl: `${clientUrl}/dashboard?success=true`
     });
