@@ -16,8 +16,9 @@ export default function Dashboard({ onNewSketch, onSketchSelect }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tracker = params.get('tracker');
+    const sessionId = params.get('session_id');
     
-    if (params.get('success') === 'true' || tracker) {
+    if (params.get('success') === 'true' || tracker || sessionId) {
       setShowSuccess(true);
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => setShowSuccess(false), 5000);
@@ -33,11 +34,27 @@ export default function Dashboard({ onNewSketch, onSketchSelect }) {
           .then(res => res.json())
           .then(data => {
             if (data.success) {
-              // Refresh the page to update user status
               window.location.reload();
             }
           })
           .catch(err => console.error('Safepay verify failed:', err));
+      }
+      
+      // If redirected from Stripe, verify payment and upgrade user
+      if (sessionId) {
+        fetch(`${import.meta.env.VITE_API_URL || ''}/api/billing/verify-stripe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ session_id: sessionId })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            }
+          })
+          .catch(err => console.error('Stripe verify failed:', err));
       }
     }
   }, []);

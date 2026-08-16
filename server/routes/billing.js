@@ -133,7 +133,7 @@ router.post('/verify-safepay', requireAuth, async (req, res) => {
     }
 
     // Verify payment status with Safepay API
-    const verifyResponse = await fetch(`${SAFEPAY_SANDBOX_URL}/order/v1/status/${tracker}`, {
+    const verifyResponse = await fetch(`${SAFEPAY_SANDBOX_URL}/order/v1/${tracker}`, {
       method: 'GET',
       headers: {
         'X-SFPY-MERCHANT-SECRET': process.env.SAFEPAY_SECRET_KEY
@@ -162,7 +162,35 @@ router.post('/verify-safepay', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Failed to verify payment' });
   }
 });
+// Verify Stripe payment and upgrade user
+router.post('/verify-stripe', requireAuth, async (req, res) => {
+  try {
+    const { session_id } = req.body;
+    if (!session_id) {
+      return res.status(400).json({ error: 'Session ID is required' });
+    }
 
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
+    const session = await stripe.checkout.sessions.retrieve(session_id);
+
+    if (session.payment_status === 'paid') {
+      const user = await User.findById(req.user.userId);
+      if (user && !user.isPro) {
+        user.isPro = true;
+        user.subscriptionId = session.subscription;
+        user.stripeCustomerId = session.customer;
+        await user.save();
+        console.log(`User ${user._id} upgraded to Pro via Stripe frontend verification!`);
+      }
+      return res.json({ success: true, isPro: true });
+    }
+
+    res.json({ success: false, status: session.payment_status, message: 'Payment not yet confirmed' });
+  } catch (error) {
+    console.error('Stripe verify error:', error);
+    res.status(500).json({ error: 'Failed to verify Stripe payment' });
+  }
+});
 export const stripeWebhookHandler = async (req, res) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
   const sig = req.headers['stripe-signature'];
