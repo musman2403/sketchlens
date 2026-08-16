@@ -6,7 +6,6 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LoadingScreen from './LoadingScreen';
 
-// Subcomponents (mocked for now, will create next)
 // Subcomponents
 import SketchOverlay from './SketchOverlay';
 import StepNavigation from './StepNavigation';
@@ -175,16 +174,16 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
     <div className="workspace-page">
       {/* Top Header */}
       <div className="workspace-header">
-        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '1rem' }}>
-          <ArrowLeft size={20} /> {t('workspace.exit')}
+        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.85rem' }}>
+          <ArrowLeft size={18} /> {t('workspace.exit')}
         </button>
         
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={handleDownload} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '50%', cursor: 'pointer', border: 'none', color: '#fff' }} title={t('buttons.download')}>
-            <Download size={18} />
+        <div style={{ display: 'flex', gap: '0.35rem' }}>
+          <button onClick={handleDownload} style={{ padding: '0.4rem', background: 'rgba(255,255,255,0.05)', borderRadius: '50%', cursor: 'pointer', border: 'none', color: '#fff' }} title={t('buttons.download')}>
+            <Download size={16} />
           </button>
-          <button onClick={handleShare} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '50%', cursor: 'pointer', border: 'none', color: '#fff' }} title={t('buttons.share')}>
-            <Share2 size={18} />
+          <button onClick={handleShare} style={{ padding: '0.4rem', background: 'rgba(255,255,255,0.05)', borderRadius: '50%', cursor: 'pointer', border: 'none', color: '#fff' }} title={t('buttons.share')}>
+            <Share2 size={16} />
           </button>
         </div>
       </div>
@@ -203,25 +202,25 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem 1rem',
-              marginBottom: '2rem',
+              gap: '0.35rem',
+              padding: '0.5rem 0.75rem',
+              marginBottom: '0.75rem',
               borderRadius: '9999px',
               fontWeight: '500',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               border: 'none',
               cursor: isSaving ? 'not-allowed' : 'pointer',
               background: isSaved ? 'rgba(16, 185, 129, 0.2)' : isSaving ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)',
               color: isSaved ? '#34d399' : isSaving ? 'rgba(255,255,255,0.5)' : '#fff'
             }}
           >
-            {isSaved ? <><Check size={16} /> {t('buttons.saved')}</> : 
-             isSaving ? <><Loader2 size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Saving...</> : 
-             <><Save size={16} /> {t('buttons.save')}</>}
+            {isSaved ? <><Check size={14} /> {t('buttons.saved')}</> : 
+             isSaving ? <><Loader2 size={14} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Saving...</> : 
+             <><Save size={14} /> {t('buttons.save')}</>}
           </button>
         )}
 
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
           <InstructionCard 
             step={currentStep + 1} 
             total={stepImages.length} 
@@ -229,7 +228,7 @@ export default function SketchWorkspace({ image, stepCount, difficulty, artStyle
           />
         </div>
 
-        <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
+        <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
           <OpacitySlider value={opacity} onChange={setOpacity} />
           <StepNavigation 
             current={currentStep} 

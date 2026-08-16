@@ -158,74 +158,121 @@ main {
   overflow: hidden;
 }
 
-/* Mobile Responsiveness for Workspace */
+/* =========================================
+   MOBILE RESPONSIVENESS (≤768px)
+   ========================================= */
 @media (max-width: 768px) {
-  .workspace-header {
-    padding: 0.5rem 1rem;
-  }
-  .workspace-content {
-    flex-direction: column-reverse;
-  }
-  .workspace-canvas {
-    flex: 3; /* Takes 75% of remaining height */
-  }
-  .workspace-sidebar {
-    width: 100%;
-    flex: 1; /* Takes 25% of remaining height */
-    padding: 1rem;
-    border-right: none;
-    border-top: 1px solid var(--border-glass);
-    overflow-y: auto;
-  }
-}
 
-/* General Mobile Responsiveness */
-@media (max-width: 768px) {
-  /* Typography Scaling */
-  .text-gradient {
-    font-size: clamp(2rem, 8vw, 3rem) !important;
+  /* --- Navbar --- */
+  .navbar-container {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+    justify-content: space-between !important;
   }
-  
-  /* Layout Stacks */
+
+  .navbar-container .text-gradient {
+    font-size: 1.1rem !important;
+  }
+
+  /* --- Typography --- */
+  .text-gradient {
+    font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+  }
+
+  /* --- Layout Stacks --- */
   .flex-responsive {
     flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
+    align-items: stretch !important;
+    text-align: left !important;
   }
-  
+
   .flex-responsive-reverse {
     flex-direction: column-reverse !important;
   }
-  
-  /* Padding Scaling */
+
+  /* --- Padding --- */
   .p-responsive {
-    padding: 1.5rem 1rem !important;
+    padding: 1.25rem 1rem !important;
   }
-  
+
   .px-responsive {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
   }
-  
-  /* Navbar */
-  .navbar-container {
-    flex-wrap: wrap !important;
-    gap: 1rem !important;
-    justify-content: center !important;
-  }
-  
-  /* Grid Layouts */
+
+  /* --- Grid Layouts --- */
   .grid-responsive {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    gap: 0.75rem !important;
   }
-  
+
   .dashboard-grid {
     grid-template-columns: 1fr !important;
   }
-  
+
   .header-actions {
     width: 100%;
     justify-content: space-between;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
+  }
+
+  /* --- Landing Page --- */
+  .landing-page {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .landing-page header {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .landing-page .features {
+    padding: 1.25rem !important;
+    gap: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .landing-page .feature {
+    flex: 1 1 100% !important;
+    text-align: left !important;
+  }
+
+  /* --- Image Uploader --- */
+  .uploader-page h2 {
+    font-size: 1.5rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .uploader-page .glass-panel {
+    padding: 2rem 1.5rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  /* --- Workspace --- */
+  .workspace-header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .workspace-content {
+    flex-direction: column-reverse;
+  }
+
+  .workspace-canvas {
+    flex: 4;
+  }
+
+  .workspace-sidebar {
+    width: 100%;
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-right: none;
+    border-top: 1px solid var(--border-glass);
+    overflow-y: auto;
+    gap: 0.5rem;
+  }
+
+  .workspace-sidebar .glass-panel {
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
   }
 }

@@ -15,38 +15,38 @@ export default function Navbar({ onShowPricing }) {
   };
 
   return (
-    <nav className="glass-header navbar-container" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div style={{ fontWeight: 'bold', fontSize: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-        <span className="text-gradient">SketchLens</span>
+    <nav className="glass-header navbar-container" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'nowrap' }}>
+      <div style={{ fontWeight: 'bold', fontSize: '1.25rem', display: 'flex', gap: '0.5rem', alignItems: 'center', minWidth: 0, flexShrink: 1 }}>
+        <span className="text-gradient" style={{ whiteSpace: 'nowrap' }}>SketchLens</span>
         <select 
           onChange={(e) => changeLanguage(e.target.value)} 
           value={i18n.language}
-          style={{ background: 'var(--bg-surface)', color: 'white', border: '1px solid var(--border-glass)', borderRadius: '4px', padding: '0.25rem 0.5rem' }}
+          style={{ background: 'var(--bg-surface)', color: 'white', border: '1px solid var(--border-glass)', borderRadius: '4px', padding: '0.2rem 0.35rem', fontSize: '0.75rem', flexShrink: 0 }}
         >
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="ar">العربية</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="ar">AR</option>
         </select>
       </div>
 
-      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexShrink: 0 }}>
         {user && !user.isPro && (
           <button 
             onClick={onShowPricing}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--accent-gradient)', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', cursor: 'pointer', fontWeight: 'bold' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'var(--accent-gradient)', color: '#fff', border: 'none', padding: '0.4rem 0.75rem', borderRadius: 'var(--radius-pill)', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
           >
-            <Sparkles size={16} /> Upgrade to Pro
+            <Sparkles size={14} /> Pro
           </button>
         )}
         {user && user.isPro && (
-          <span style={{ color: 'var(--accent-primary)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            <Sparkles size={16} /> PRO
+          <span style={{ color: 'var(--accent-primary)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem' }}>
+            <Sparkles size={14} /> PRO
           </span>
         )}
         {user ? (
           <button 
             onClick={logout}
-            style={{ background: 'transparent', color: 'var(--text-secondary)', border: 'none', cursor: 'pointer' }}
+            style={{ background: 'transparent', color: 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' }}
           >
             {t('buttons.signOut')}
           </button>
@@ -57,18 +57,20 @@ export default function Navbar({ onShowPricing }) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 1.25rem',
+              gap: '0.35rem',
+              padding: '0.4rem 0.85rem',
               background: 'rgba(255, 255, 255, 0.1)',
               color: '#fff',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: 'var(--radius-pill)',
               cursor: 'pointer',
               fontWeight: '500',
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(10px)',
+              fontSize: '0.85rem',
+              whiteSpace: 'nowrap'
             }}
           >
-            <LogIn size={16} /> {t('buttons.signIn')}
+            <LogIn size={14} /> {t('buttons.signIn')}
           </button>
         )}
       </div>
@@ -76,3 +78,4 @@ export default function Navbar({ onShowPricing }) {
     </nav>
   );
 }
+
