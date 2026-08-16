@@ -124,6 +124,45 @@ router.post('/create-safepay-session', requireAuth, async (req, res) => {
   }
 });
 
+// Verify Safepay payment and upgrade user
+router.post('/verify-safepay', requireAuth, async (req, res) => {
+  try {
+    const { tracker } = req.body;
+    if (!tracker) {
+      return res.status(400).json({ error: 'Tracker token is required' });
+    }
+
+    // Verify payment status with Safepay API
+    const verifyResponse = await fetch(`${SAFEPAY_SANDBOX_URL}/order/v1/status/${tracker}`, {
+      method: 'GET',
+      headers: {
+        'X-SFPY-MERCHANT-SECRET': process.env.SAFEPAY_SECRET_KEY
+      }
+    });
+
+    const verifyData = await verifyResponse.json();
+    console.log('Safepay verify response:', JSON.stringify(verifyData, null, 2));
+
+    const state = verifyData?.data?.state || verifyData?.state;
+
+    if (state === 'TRACKER_ENDED' || state === 'PAYMENT_COMPLETE' || state === 'DELIVERED') {
+      const user = await User.findById(req.user.userId);
+      if (user && !user.isPro) {
+        user.isPro = true;
+        user.subscriptionId = tracker;
+        await user.save();
+        console.log(`User ${user._id} upgraded to Pro via Safepay verification!`);
+      }
+      return res.json({ success: true, isPro: true });
+    }
+
+    res.json({ success: false, state, message: 'Payment not yet confirmed' });
+  } catch (error) {
+    console.error('Safepay verify error:', error);
+    res.status(500).json({ error: 'Failed to verify payment' });
+  }
+});
+
 export const stripeWebhookHandler = async (req, res) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
   const sig = req.headers['stripe-signature'];

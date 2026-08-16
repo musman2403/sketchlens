@@ -15,10 +15,30 @@ export default function Dashboard({ onNewSketch, onSketchSelect }) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('success') === 'true' || params.get('tracker')) {
+    const tracker = params.get('tracker');
+    
+    if (params.get('success') === 'true' || tracker) {
       setShowSuccess(true);
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => setShowSuccess(false), 5000);
+      
+      // If redirected from Safepay, verify payment and upgrade user
+      if (tracker) {
+        fetch(`${import.meta.env.VITE_API_URL || ''}/api/billing/verify-safepay`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ tracker })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              // Refresh the page to update user status
+              window.location.reload();
+            }
+          })
+          .catch(err => console.error('Safepay verify failed:', err));
+      }
     }
   }, []);
 
