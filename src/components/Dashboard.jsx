@@ -11,6 +11,16 @@ export default function Dashboard({ onNewSketch, onSketchSelect }) {
   const [sketches, setSketches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('my_sketches');
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      setShowSuccess(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => setShowSuccess(false), 5000);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchSketches = async () => {
@@ -62,7 +72,24 @@ export default function Dashboard({ onNewSketch, onSketchSelect }) {
   };
 
   return (
-    <div className="landing-page p-responsive" style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div className="landing-page p-responsive" style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      {showSuccess && (
+        <div style={{
+          position: 'fixed', top: '2rem', left: '50%', transform: 'translateX(-50%)',
+          background: 'var(--accent-gradient)', color: '#fff', padding: '1rem 2rem',
+          borderRadius: 'var(--radius-pill)', fontWeight: 'bold', zIndex: 1000,
+          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
+          animation: 'slideDown 0.5s ease-out'
+        }}>
+          Payment Successful! Welcome to SketchLens Pro!
+          <style>{`
+            @keyframes slideDown {
+              from { top: -5rem; opacity: 0; }
+              to { top: 2rem; opacity: 1; }
+            }
+          `}</style>
+        </div>
+      )}
       <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         
         {/* Header */}

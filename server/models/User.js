@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
   generations: [{ type: Date }],
   isPro: { type: Boolean, default: false },
   stripeCustomerId: { type: String, sparse: true, unique: true },
+  subscriptionId: { type: String },
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);

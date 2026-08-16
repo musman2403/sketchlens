@@ -5,11 +5,11 @@ import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Use dummy key if not provided for dev mode
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
+// Stripe is initialized inside routes to ensure env vars are loaded
 
 router.post('/create-checkout-session', requireAuth, async (req, res) => {
   try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
     const user = await User.findById(req.user.userId);
     
     // Create a Stripe Checkout Session
@@ -55,5 +55,45 @@ router.post('/mock-upgrade', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Failed to upgrade user' });
   }
 });
+
+export const stripeWebhookHandler = async (req, res) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET || 'whsec_dummy'
+    );
+  } catch (err) {
+    console.error(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    
+    try {
+      const userId = session.client_reference_id;
+      const stripeCustomerId = session.customer;
+      const subscriptionId = session.subscription;
+
+      if (userId) {
+        await User.findByIdAndUpdate(userId, {
+          isPro: true,
+          stripeCustomerId: stripeCustomerId,
+          subscriptionId: subscriptionId
+        });
+        console.log(`User ${userId} upgraded to Pro via webhook!`);
+      }
+    } catch (err) {
+      console.error('Error upgrading user in webhook:', err);
+    }
+  }
+
+  res.send();
+};
 
 export default router;
