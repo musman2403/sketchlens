@@ -15,7 +15,7 @@ export default function Dashboard({ onNewSketch, onSketchSelect }) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('success') === 'true') {
+    if (params.get('success') === 'true' || params.get('tracker')) {
       setShowSuccess(true);
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => setShowSuccess(false), 5000);
