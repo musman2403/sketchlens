@@ -13,7 +13,7 @@ import cookieParser from 'cookie-parser';
 
 import authRoutes from './routes/auth.js';
 import sketchRoutes from './routes/sketches.js';
-import billingRoutes, { stripeWebhookHandler } from './routes/billing.js';
+import billingRoutes, { stripeWebhookHandler, safepayWebhookHandler } from './routes/billing.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -61,6 +61,7 @@ app.use(cors({
 
 // Webhook route needs raw body parser for signature verification
 app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
+app.post('/api/billing/safepay-webhook', express.raw({ type: 'application/json' }), safepayWebhookHandler);
 
 app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
