@@ -87,11 +87,15 @@ router.post('/create-safepay-session', requireAuth, async (req, res) => {
     await user.save();
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    // The Safepay checkout redirect URL
     const orderId = `order_${Date.now()}`;
-    const cancelUrl = encodeURIComponent(`${clientUrl}/dashboard?canceled=true`);
-    const successUrl = encodeURIComponent(`${clientUrl}/dashboard?success=true`);
-    const checkoutUrl = `https://sandbox.api.getsafepay.com/components?env=sandbox&beacon=${trackerToken}&source=custom&order_id=${orderId}&cancel_url=${cancelUrl}&redirect_url=${successUrl}`;
+    const checkoutUrl = safepay.checkout.createCheckoutUrl({
+      env: 'sandbox',
+      beacon: trackerToken,
+      source: 'custom',
+      orderId: orderId,
+      cancelUrl: `${clientUrl}/dashboard?canceled=true`,
+      redirectUrl: `${clientUrl}/dashboard?success=true`
+    });
     
     res.json({ url: checkoutUrl });
   } catch (error) {
