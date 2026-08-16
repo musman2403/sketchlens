@@ -1,7 +1,6 @@
 import express from 'express';
 import Stripe from 'stripe';
 import crypto from 'crypto';
-import safepayModule from '@sfpy/node-core';
 import User from '../models/User.js';
 import { requireAuth } from '../middleware/auth.js';
 
@@ -9,13 +8,9 @@ const router = express.Router();
 
 // Stripe is initialized inside routes to ensure env vars are loaded
 
-// Initialize Safepay helper
-const getSafepay = () => {
-  return safepayModule(process.env.SAFEPAY_SECRET_KEY, {
-    authType: 'secret',
-    host: 'https://sandbox.api.getsafepay.com'
-  });
-};
+// Safepay config
+const SAFEPAY_SANDBOX_URL = 'https://sandbox.api.getsafepay.com';
+const SAFEPAY_SANDBOX_CHECKOUT = 'https://sandbox.api.getsafepay.com';
 
 router.post('/create-checkout-session', requireAuth, async (req, res) => {
   try {
@@ -66,36 +61,61 @@ router.post('/mock-upgrade', requireAuth, async (req, res) => {
   }
 });
 
-// Create Safepay Checkout Session
+// Create Safepay Checkout Session (using direct REST API)
 router.post('/create-safepay-session', requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
-    const safepay = getSafepay();
     
-    const payment = await safepay.payments.session.setup({
-      merchant_api_key: process.env.SAFEPAY_API_KEY,
-      intent: "CYBERSOURCE",
-      mode: "payment",
-      currency: "PKR",
-      amount: 300000, // 3000 PKR
+    // Step 1: Create a payment session via Safepay REST API
+    const initResponse = await fetch(`${SAFEPAY_SANDBOX_URL}/order/v1/init`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-SFPY-MERCHANT-SECRET': process.env.SAFEPAY_SECRET_KEY
+      },
+      body: JSON.stringify({
+        client: process.env.SAFEPAY_API_KEY,
+        amount: 3000,
+        currency: 'PKR',
+        environment: 'sandbox'
+      })
     });
 
-    const trackerToken = payment.data.tracker.token;
-    
-    // Save the tracker token to the user document so we know who is paying when the webhook hits
-    user.subscriptionId = trackerToken; // reusing subscriptionId field for simplicity during payment
+    const initData = await initResponse.json();
+    console.log('Safepay init response:', JSON.stringify(initData, null, 2));
+
+    if (!initResponse.ok) {
+      console.error('Safepay init failed:', initData);
+      return res.status(500).json({ error: 'Failed to initialize Safepay payment', details: initData });
+    }
+
+    const trackerToken = initData.data?.token || initData.token;
+
+    if (!trackerToken) {
+      console.error('No tracker token in Safepay response:', initData);
+      return res.status(500).json({ error: 'No payment token received from Safepay' });
+    }
+
+    // Save the tracker token to the user so we can match on webhook
+    user.subscriptionId = trackerToken;
     await user.save();
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
     const orderId = `order_${Date.now()}`;
-    const checkoutUrl = safepay.checkout.createCheckoutUrl({
-      env: 'sandbox',
+    
+    // Step 2: Construct the checkout URL (matches @sfpy/node-sdk format)
+    const params = new URLSearchParams({
       beacon: trackerToken,
+      order_id: orderId,
       source: 'custom',
-      orderId: orderId,
-      cancelUrl: `${clientUrl}/dashboard?canceled=true`,
-      redirectUrl: `${clientUrl}/dashboard?success=true`
+      redirect_url: `${clientUrl}/dashboard?success=true`,
+      cancel_url: `${clientUrl}/dashboard?canceled=true`,
+      env: 'sandbox',
+      webhooks: 'true'
     });
+
+    const checkoutUrl = `${SAFEPAY_SANDBOX_CHECKOUT}/checkout/pay?${params.toString()}`;
+    console.log('Safepay checkout URL:', checkoutUrl);
     
     res.json({ url: checkoutUrl });
   } catch (error) {
