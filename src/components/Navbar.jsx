@@ -4,7 +4,7 @@ import { Sparkles, LogIn } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { useState } from 'react';
 
-export default function Navbar({ onShowPricing }) {
+export default function Navbar({ onShowPricing, isTransparent }) {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -15,7 +15,21 @@ export default function Navbar({ onShowPricing }) {
   };
 
   return (
-    <nav className="glass-header navbar-container" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'nowrap' }}>
+    <nav className={isTransparent ? "navbar-container" : "glass-header navbar-container"} style={{ 
+      padding: '1rem 2rem', 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center', 
+      gap: '0.5rem', 
+      flexWrap: 'nowrap',
+      position: isTransparent ? 'absolute' : 'relative',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 100,
+      background: isTransparent ? 'transparent' : undefined,
+      borderBottom: isTransparent ? 'none' : undefined
+    }}>
       <div style={{ fontWeight: 'bold', fontSize: '1.25rem', display: 'flex', gap: '0.5rem', alignItems: 'center', minWidth: 0, flexShrink: 1 }}>
         <span className="text-gradient" style={{ whiteSpace: 'nowrap' }}>SketchLens</span>
         <select 

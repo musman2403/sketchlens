@@ -10,10 +10,22 @@ export default function Landing({ onStart }) {
   return (
     <div className="landing-page" style={{ width: '100%' }}>
       {/* Hero Section */}
-      <section className="hero-section" style={{ position: 'relative', overflow: 'hidden', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 2rem' }}>
-        {/* Abstract glowing backgrounds */}
-        <div style={{ position: 'absolute', top: '10%', left: '20%', width: '300px', height: '300px', background: 'var(--accent-primary)', filter: 'blur(100px)', opacity: 0.3, borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: '10%', right: '20%', width: '400px', height: '400px', background: 'var(--accent-secondary)', filter: 'blur(120px)', opacity: 0.2, borderRadius: '50%' }} />
+      <section className="hero-section" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8rem 2rem 4rem' }}>
+        {/* Background Image Panels */}
+        <div style={{ position: 'absolute', top: 0, bottom: 0, left: '-10%', right: '-10%', display: 'flex', transform: 'skewX(-20deg) scale(1.2)', transformOrigin: 'center', zIndex: 0, gap: '6px', background: 'var(--bg-base)' }}>
+          {[
+            '/assets/bg_sketch_1_1786950413622.jpg',
+            '/assets/bg_sketch_2_1786950424204.jpg',
+            '/assets/bg_sketch_3_1786950434379.jpg',
+            '/assets/bg_sketch_4_1786950445802.jpg'
+          ].map((src, idx) => (
+             <div key={idx} style={{ flex: 1, overflow: 'hidden', position: 'relative', opacity: 0.4 }}>
+                <div style={{ position: 'absolute', top: '-30%', left: '-30%', right: '-30%', bottom: '-30%', backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center', transform: 'skewX(20deg)' }}></div>
+             </div>
+          ))}
+        </div>
+        {/* Dark Overlay to ensure text readability */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, var(--bg-base) 95%)', zIndex: 0 }}></div>
         
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '800px' }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>

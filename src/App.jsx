@@ -82,7 +82,7 @@ function AppContent() {
 
   return (
     <div className="app-container" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {screen !== 'workspace' && <Navbar onShowPricing={() => setShowPricing(true)} />}
+      {screen !== 'workspace' && <Navbar onShowPricing={() => setShowPricing(true)} isTransparent={screen === 'landing'} />}
       <div style={{ flex: 1, overflow: 'auto', position: 'relative' }}>
         <AnimatePresence mode="wait">
           <motion.div

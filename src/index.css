@@ -1,18 +1,18 @@
 :root {
   /* Premium Dark Mode Color Palette */
-  --bg-base: #0f172a;
-  --bg-surface: rgba(30, 41, 59, 0.7);
-  --bg-glass: rgba(15, 23, 42, 0.6);
-  --border-glass: rgba(255, 255, 255, 0.1);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --bg-base: #000000;
+  --bg-surface: rgba(26, 26, 26, 0.7);
+  --bg-glass: rgba(0, 0, 0, 0.6);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
   
-  /* Brand Accents (Vibrant & Gradient) */
-  --accent-primary: #6366f1;
-  --accent-secondary: #ec4899;
-  --accent-tertiary: #8b5cf6;
-  --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
-  --accent-glow: rgba(99, 102, 241, 0.5);
+  /* Brand Accents (Sleek & Professional) */
+  --accent-primary: #0070f3;
+  --accent-secondary: #3291ff;
+  --accent-tertiary: #79ffe1;
+  --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+  --accent-glow: rgba(0, 112, 243, 0.4);
 
   /* Spacing & Radii */
   --radius-sm: 0.5rem;
@@ -38,10 +38,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.5;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 
 /* Glassmorphism Utilities */
